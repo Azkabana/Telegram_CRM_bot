@@ -1,3 +1,4 @@
+# Этот проект связан с GitHub
 import asyncio
 from bot import dp, bot
 from db.base import create_pool, setup_table
