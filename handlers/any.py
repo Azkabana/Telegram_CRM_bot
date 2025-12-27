@@ -22,7 +22,7 @@ async def handler_any(message: types.Message):
     if result_status == None:
         print("if result_status is None: - прошли")
         await db_add_ticket(pool, message.from_user.id, message.text)
-        await db_d_add(pool, ticket_id, message.text, message.message_id, role="user")
+        await db_d_add(pool, ticket_id, message.text, message.message_id, "user")
         await bot.send_message(CHAT_ADMIN_ID, notification)
         return
     else:
@@ -40,16 +40,14 @@ async def handler_any(message: types.Message):
                 return
             if result_status[1] == "new":
                 await db_d_add(
-                    pool, ticket_id, message.text, message.message_id, role="user"
+                    pool, ticket_id, message.text, message.message_id, "user"
                 )
                 await bot.send_message(CHAT_ADMIN_ID, notification)
                 return
         # Создание новой заявки со статусом new
         else:
             await db_add_ticket(pool, message.from_user.id, message.text)
-            await db_d_add(
-                pool, ticket_id, message.text, message.message_id, role="user"
-            )
+            await db_d_add(pool, ticket_id, message.text, message.message_id, "user")
             await bot.send_message(CHAT_ADMIN_ID, notification)
             await message.answer("Заявка отправлена ✅")
             return

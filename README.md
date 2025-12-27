@@ -21,3 +21,9 @@ Telegram-CRM для обработки заявок с хранением в Pos
 2. Создать .env на основе .env.example
 3. Установить зависимости: pip install -r requirements.txt
 4. Запустить бота
+
+## Скриншоты
+
+!(images/1.png)
+!(images/1.png)
+!(images/1.png)

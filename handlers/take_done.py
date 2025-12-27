@@ -10,7 +10,7 @@ router = Router()
 async def handler_take(msg: types.Message):
     text = msg.text.split()
     if text[1].isdigit():
-        await msg.answer("take прошел")
+        await msg.answer(f"Заявка [{text[1]}]: Принято")
         pool = msg.bot.pool
         await db_status_take(pool, msg.from_user.id, int(text[1]), status="take")
     else:
@@ -22,7 +22,7 @@ async def handler_take(msg: types.Message):
 async def handler_done(msg: types.Message):
     text = msg.text.split()
     if text[1].isdigit():
-        await msg.answer("done прошел")
+        await msg.answer(f"Заявка [{text[1]}]: Заркыто")
         pool = msg.bot.pool
         await db_status_done(pool, msg.from_user.id, int(text[1]), status="done")
     else:
