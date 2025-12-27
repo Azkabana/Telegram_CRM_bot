@@ -24,6 +24,6 @@ Telegram-CRM для обработки заявок с хранением в Pos
 
 ## Скриншоты
 
-![Чат пользователя](images/scr1.png)
-![Чат Модерации](images/scr1.png)
-![Чат Модерации](images/scr1.png)
+![Чат пользователя](Project1_CRM_bot/images/scr1.png)
+![Чат Модерации](Project1_CRM_bot/images/scr1.png)
+![Чат Модерации](Project1_CRM_bot/images/scr1.png)
