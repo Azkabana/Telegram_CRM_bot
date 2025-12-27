@@ -12,7 +12,7 @@ async def handler_take(msg: types.Message):
     if text[1].isdigit():
         await msg.answer("take прошел")
         pool = msg.bot.pool
-        await db_status_take(pool, int(text[1]))
+        await db_status_take(pool, msg.from_user.id, int(text[1]), status="take")
     else:
         await msg.answer("после /take пробел и номер заявки")
 
@@ -24,6 +24,6 @@ async def handler_done(msg: types.Message):
     if text[1].isdigit():
         await msg.answer("done прошел")
         pool = msg.bot.pool
-        await db_status_done(pool, int(text[1]))
+        await db_status_done(pool, msg.from_user.id, int(text[1]), status="done")
     else:
         await msg.answer("после /done пробел и номер заявки")

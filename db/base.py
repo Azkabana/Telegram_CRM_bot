@@ -38,6 +38,7 @@ async def setup_table(pool):
                         user_id BIGINT REFERENCES users(user_id),
                         message_text TEXT,
                         status TEXT DEFAULT 'new',
+                        worker_id BIGINT,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP); """
         )
         print("Проверка таблицы [tickets]: True")
@@ -46,10 +47,10 @@ async def setup_table(pool):
         await conn.execute(
             """ CREATE TABLE IF NOT EXISTS messages(                            
                         id SERIAL PRIMARY KEY, 
-                        ticket_id INTEGER NOT NULL,
+                        ticket_id BIGINT NOT NULL,
                         role TEXT NOT NULL, 
                         text TEXT NOT NULL,
-                        id_msg INTEGER NOT NULL,
+                        id_msg BIGINT NOT NULL,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         
                         

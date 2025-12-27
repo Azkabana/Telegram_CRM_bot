@@ -15,7 +15,7 @@ async def db_add_user(pool, username, telegram_id):
 # Добавление заявкив таблицу ticket
 async def db_add_ticket(pool, user_id, text):
     async with pool.acquire() as conn:
-        # fetchrow возвращает результат строки, если есть RETURNING, в нашем случае результат id
+        # fetchrow возвращает результат строки, если есть RETURNING, в нашем случае результат id(заявки)
         row = await conn.fetchrow(
             "INSERT INTO tickets (user_id, message_text) VALUES($1,$2) RETURNING id",
             user_id,
@@ -29,21 +29,36 @@ async def db_add_ticket(pool, user_id, text):
             text,
             role="user",
         )
-        return row["id"]
+        print(f"row = {row[0]}")
+        return row[0]
 
 
 # /take взять заявку
-async def db_status_take(pool, id_noti, status="take"):
+async def db_status_take(pool, worker_id, id_noti, status):
     async with pool.acquire() as conn:
         # fetchrow возвращает результат строки, если есть RETURNING, в нашем случае результат id
-        await conn.execute("UPDATE tickets SET status=$1 WHERE id=$2", status, id_noti)
+        await conn.execute(
+            """UPDATE tickets 
+                           SET status=$3, worker_id=$2 
+                           WHERE id=$1""",
+            id_noti,
+            worker_id,
+            status,
+        )
 
 
 # /done Закрыть заявку
-async def db_status_done(pool, id_noti, status="done"):
+async def db_status_done(pool, worker_id, id_noti, status):
     async with pool.acquire() as conn:
         # fetchrow возвращает результат строки, если есть RETURNING, в нашем случае результат id
-        await conn.execute("UPDATE tickets SET status=$1 WHERE id=$2", status, id_noti)
+        await conn.execute(
+            """UPDATE tickets 
+                           SET status=$3, worker_id=$2 
+                           WHERE id=$1""",
+            id_noti,
+            worker_id,
+            status,
+        )
 
 
 # Поиск в ticket и users по username - /find @qweqwe
@@ -101,7 +116,7 @@ async def db_message_text(pool, id):
 async def db_ststus_noti(pool, user_id):
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
-            """SELECT id, status
+            """SELECT id, status, worker_id
             FROM tickets
             WHERE user_id = $1
             AND status !='done'
@@ -109,6 +124,7 @@ async def db_ststus_noti(pool, user_id):
             LIMIT 1""",
             user_id,
         )
+        print(row)
         return row
 
 
