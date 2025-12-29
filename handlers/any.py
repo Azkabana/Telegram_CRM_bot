@@ -3,51 +3,92 @@ from aiogram import types, Router
 
 # from aiogram.filters import Command
 from dotenv import load_dotenv
-from db.queries import db_add_ticket, db_ststus_noti, db_d_add
+from db.queries import db_add_ticket, db_status_noti, db_d_add
+from keyboards.inline import kb_take_request
 from bot import bot
 
 load_dotenv()
 router = Router()
 CHAT_ADMIN_ID = os.getenv("CHAT_ADMIN_ID")
+CHAT_KO_GROUP_ID = os.getenv("CHAT_KO_GROUP_ID")
 
 
 @router.message()
 async def handler_any(message: types.Message):
-    pool = message.bot.pool
-    # result_status[0] - номер заявки result_status[1] - статус
-    result_status = await db_ststus_noti(pool, message.from_user.id)
-    print("result_status - получил None")
-    print(f"result_status = {result_status}")
-    # безопастная обработка статуса
-    if result_status == None:
-        print("if result_status is None: - прошли")
-        await db_add_ticket(pool, message.from_user.id, message.text)
-        await db_d_add(pool, ticket_id, message.text, message.message_id, "user")
-        await bot.send_message(CHAT_ADMIN_ID, notification)
-        return
-    else:
-        notification = f"Новая заявка!\nПользователь: {message.from_user.first_name or 'нет'}\nID заявки: {result_status[0]}\n\n{message.text}"
-        ticket_id = result_status[0]
-        worker_id = result_status[2]
-        # Продолжение заявки если статус не done.
-        if result_status[1] != "done":
-            if result_status[1] == "take":
-                await db_d_add(
-                    pool, ticket_id, message.text, message.message_id, "user"
-                )
-                notification_take = f"От: {message.from_user.first_name}\nПо завявке: {ticket_id}\n\n{message.text}"
-                await bot.send_message(worker_id, notification_take)
-                return
-            if result_status[1] == "new":
-                await db_d_add(
-                    pool, ticket_id, message.text, message.message_id, "user"
-                )
-                await bot.send_message(CHAT_ADMIN_ID, notification)
-                return
-        # Создание новой заявки со статусом new
-        else:
+    if message.from_user.id != int(CHAT_ADMIN_ID):
+        print(message.from_user.id, CHAT_ADMIN_ID)
+        print(type(message.from_user.id), type(CHAT_ADMIN_ID))
+        pool = message.bot.pool
+        # result_status[0] - номер заявки result_status[1] - статус
+        result_status = await db_status_noti(pool, message.from_user.id)
+        print(f"result_status = {result_status}")
+
+        # безопастная обработка статуса
+        if result_status == None:
+            print("if result_status == None: start...")
+
+            # Добавляем заявку в бд
             await db_add_ticket(pool, message.from_user.id, message.text)
-            await db_d_add(pool, ticket_id, message.text, message.message_id, "user")
-            await bot.send_message(CHAT_ADMIN_ID, notification)
-            await message.answer("Заявка отправлена ✅")
+            print("db_add_ticket: True")
+
+            result_status2 = await db_status_noti(pool, message.from_user.id)
+            ticket_id2 = result_status2[0]
+            str_time2 = result_status2[3].strftime("%H:%M - %d.%m.%Y")
+            notification2 = f"🆕 Новая заявка #{result_status2[0]}\n👤 {message.from_user.first_name or 'нет'}\n🕒 {str_time2}\n\n{message.text}"
+            print("Переменные: True")
+
+            await db_d_add(pool, ticket_id2, message.text, message.message_id, "user")
+            print("db_d_add: True")
+
+            await message.bot.send_message(
+                CHAT_KO_GROUP_ID,
+                notification2,
+                reply_markup=kb_take_request(ticket_id2, message.from_user.id),
+            )
+            print("if result_status == None: True")
             return
+        else:
+            # Переменный для услвоий
+            ticket_id = result_status[0]
+            worker_id = result_status[2]
+            str_time = result_status[3].strftime("%H:%M - %d.%m.%Y")
+            notification = f"🆕 Новая заявка #{result_status[0]}\n👤 {message.from_user.first_name or 'нет'}\n🕒 {str_time}\n\n{message.text}"
+
+            # Продолжение заявки если статус не done.
+            if result_status[1] != "done":
+                if result_status[1] == "take":
+                    await db_d_add(
+                        pool, ticket_id, message.text, message.message_id, "user"
+                    )
+                    notification_take = f"👤 {message.from_user.first_name}\nЗаявка #{ticket_id}\n\n{message.text}"
+                    await message.bot.send_message(worker_id, notification_take)
+                    return
+
+                # Нужно просто изменить сообщзение - не сделанно
+                if result_status[1] == "new":
+                    await db_d_add(
+                        pool, ticket_id, message.text, message.message_id, "user"
+                    )
+                    await message.bot.send_message(
+                        CHAT_KO_GROUP_ID,
+                        notification,
+                        reply_markup=kb_take_request(ticket_id, message.from_user.id),
+                    )
+                    return
+
+            # Создание новой заявки со статусом new
+            else:
+                await db_add_ticket(pool, message.from_user.id, message.text)
+                await db_d_add(
+                    pool, ticket_id, message.text, message.message_id, "user"
+                )
+                await message.bot.send_message(
+                    CHAT_KO_GROUP_ID,
+                    notification,
+                    reply_markup=kb_take_request(ticket_id, message.from_user.id),
+                )
+                await message.answer("Заявка отправлена ✅")
+                return
+    else:
+        print("Модер случайно написал в чат")
+        return

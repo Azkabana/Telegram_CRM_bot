@@ -1,4 +1,4 @@
-from aiogram import Router, types
+"""from aiogram import Router, types
 import os
 from aiogram.filters import Command
 from dotenv import load_dotenv
@@ -29,3 +29,4 @@ async def ai_answer(msg: types.Message):
     sent = await msg.answer(result)
     # добавляем ответ ai в бд
     await db_d_add(pool, find_id, result, str(sent.message_id), role="ai")
+"""

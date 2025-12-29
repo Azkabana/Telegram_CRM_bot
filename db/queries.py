@@ -21,15 +21,6 @@ async def db_add_ticket(pool, user_id, text):
             user_id,
             text,
         )
-
-        await conn.fetchrow(
-            """INSERT INTO message(ticket_id, text, role) 
-                            VALUES($1,$2,$3)""",
-            row["id"],
-            text,
-            role="user",
-        )
-        print(f"row = {row[0]}")
         return row[0]
 
 
@@ -37,14 +28,16 @@ async def db_add_ticket(pool, user_id, text):
 async def db_status_take(pool, worker_id, id_noti, status):
     async with pool.acquire() as conn:
         # fetchrow возвращает результат строки, если есть RETURNING, в нашем случае результат id
-        await conn.execute(
+        result_w = await conn.execute(
             """UPDATE tickets 
                            SET status=$3, worker_id=$2 
-                           WHERE id=$1""",
+                           WHERE id=$1
+                           RETURNING worker_id""",
             id_noti,
             worker_id,
             status,
         )
+        return result_w[0]
 
 
 # /done Закрыть заявку
@@ -113,10 +106,10 @@ async def db_message_text(pool, id):
 
 
 # Возвращает id заявки и стутус последней не закрытой заявки
-async def db_ststus_noti(pool, user_id):
+async def db_status_noti(pool, user_id):
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
-            """SELECT id, status, worker_id
+            """SELECT id, status, worker_id, created_at
             FROM tickets
             WHERE user_id = $1
             AND status !='done'
@@ -124,7 +117,6 @@ async def db_ststus_noti(pool, user_id):
             LIMIT 1""",
             user_id,
         )
-        print(row)
         return row
 
 

@@ -3,19 +3,17 @@ import asyncio
 from bot import dp, bot
 from db.base import create_pool, setup_table
 from handlers.start import router as handler_start
-from handlers.any import router as handler_any
-from handlers.take_done import router as handler_tk_dn
+
 from handlers.find import router as find
-from handlers.ai_gen import router as ai_gen
 from handlers.reply import router as reply
+from handlers_callback.callback_admins import router as callback_admins
+from handlers.any import router as handler_any
 
 
-# Подлючаем router от /start (handler_start.router) к диспетчеру (dp)
 dp.include_router(handler_start)
-dp.include_router(handler_tk_dn)
 dp.include_router(find)
-dp.include_router(ai_gen)
 dp.include_router(reply)
+dp.include_router(callback_admins)
 dp.include_router(handler_any)  # Эта регистрациядолжна быть ниже всех
 # либо он закроет все ханделры что пойдут ниже, потому что она уневерсальная
 
