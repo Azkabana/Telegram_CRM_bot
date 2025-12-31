@@ -93,14 +93,14 @@ async def db_find_az(pool, text):
 
 
 # re 5 послдегих сообщений из таблицы message роли - user
-async def db_message_text(pool, id):
+async def db_message_text(pool, id_noti):
     async with pool.acquire() as conn:
         row = await conn.fetch(
             """SELECT role, text FROM messages 
                 WHERE ticket_id = $1
                 ORDER BY created_at
                 LIMIT 5""",
-            id,
+            id_noti,
         )
         return row
 

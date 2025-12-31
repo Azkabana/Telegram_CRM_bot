@@ -14,7 +14,7 @@ dp.include_router(handler_start)
 dp.include_router(find)
 dp.include_router(reply)
 dp.include_router(callback_admins)
-dp.include_router(handler_any)  # Эта регистрациядолжна быть ниже всех
+dp.include_router(handler_any)  # Эта регистрациядолжна быть ниже всехё
 # либо он закроет все ханделры что пойдут ниже, потому что она уневерсальная
 
 
