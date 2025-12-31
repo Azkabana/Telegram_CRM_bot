@@ -24,6 +24,7 @@ Telegram-CRM для обработки заявок с хранением в Pos
 
 ## Скриншоты
 
-![Чат пользователя](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/scr1.jpg)
-![Чат Модерации](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/scr2.jpg)
-![Чат Модерации](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/scr3.jpg)
+![Чат пользователя](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/user_chat.jpg)
+![Чат группа Модераторов и Админов](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/ChatGroup_ModersAdmins.jpg)
+![Чат Модерации](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/moder_chat.jpg)
+![Чат Модерации](https://github.com/Azkabana/Telegram_CRM_bot/blob/main/images/moder_chat2.jpg)
