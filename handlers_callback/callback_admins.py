@@ -60,6 +60,7 @@ async def handler_take_callback(call: CallbackQuery):
         ),
     )
     await call.answer()
+    return
 
 
 # --> Ответить
@@ -76,6 +77,7 @@ async def handlerKB_AnswerToUser(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup(reply_markup=None)
     await call.answer()
     print("handler_AnswerToUser: True")
+    return
 
 
 # Собщение отправки
@@ -101,6 +103,7 @@ async def handlerKB_AnswerToUser_1(msg: types.Message, state: FSMContext):
         )
         await state.set_state(ModerFSM.answerToUser_Conf)  # меняем статус
         print("handler_AnswerToUser_1: True")
+        return
 
 
 # Подтверждение оставить заявку ? (Удалить сообщение)
@@ -133,6 +136,7 @@ async def handlerKB_CloseNoti(call: CallbackQuery):
     await call.message.edit_reply_markup(reply_markup=kb_close_NewNoti())
     await call.answer()
     print("handler_CloseNoti: True")
+    return
 
 
 # AI ответ --> Отправить | Редактировать
